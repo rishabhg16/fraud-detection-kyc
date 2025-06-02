@@ -33,9 +33,9 @@ class FraudDetectionTestCase(unittest.TestCase):
         response = self.client.post('/predict',
                                     data=json.dumps(incomplete_input),
                                     content_type='application/json')
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         data = json.loads(response.data)
-        self.assertIn('fraud_prediction', data)
+        self.assertIn('error', data)
 
     def test_invalid_data_type(self):
         invalid_input = self.sample_input.copy()
@@ -43,7 +43,9 @@ class FraudDetectionTestCase(unittest.TestCase):
         response = self.client.post('/predict',
                                     data=json.dumps(invalid_input),
                                     content_type='application/json')
-        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.data)
+        self.assertIn('error', data)
 
     def test_extra_fields_ignored(self):
         extra_input = self.sample_input.copy()
